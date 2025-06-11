@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-4">欢迎使用学生信息管理系统</h1>
+            <p class="lead">这是一个简单而强大的学生信息管理系统，帮助您轻松管理学生、班级、课程和选课信息。</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- 学生管理卡片 -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-people display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">学生管理</h5>
+                    <p class="card-text">管理学生基本信息，包括姓名、学号、班级等。</p>
+                    <a href="{{ url_for('student.list_students') }}" class="btn btn-primary">
+                        <i class="bi bi-arrow-right-circle me-1"></i>进入管理
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 班级管理卡片 -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-collection display-4 text-success mb-3"></i>
+                    <h5 class="card-title">班级管理</h5>
+                    <p class="card-text">管理班级信息，查看班级学生名单。</p>
+                    <a href="{{ url_for('class_.list_classes') }}" class="btn btn-success">
+                        <i class="bi bi-arrow-right-circle me-1"></i>进入管理
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 课程管理卡片 -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-book display-4 text-info mb-3"></i>
+                    <h5 class="card-title">课程管理</h5>
+                    <p class="card-text">管理课程信息，包括课程名称、学分等。</p>
+                    <a href="{{ url_for('course.list_courses') }}" class="btn btn-info">
+                        <i class="bi bi-arrow-right-circle me-1"></i>进入管理
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 选课管理卡片 -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-check display-4 text-warning mb-3"></i>
+                    <h5 class="card-title">选课管理</h5>
+                    <p class="card-text">管理学生选课信息，录入课程成绩。</p>
+                    <a href="{{ url_for('enrollment.list_enrollments') }}" class="btn btn-warning">
+                        <i class="bi bi-arrow-right-circle me-1"></i>进入管理
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

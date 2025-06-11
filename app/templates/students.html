@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>学生管理</h2>
+    </div>
+    <div class="col text-end">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+            <i class="bi bi-plus-circle me-1"></i>添加学生
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>学号</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>年龄</th>
+                        <th>班级</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.student_id }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.gender }}</td>
+                        <td>{{ student.age }}</td>
+                        <td>{{ student.class_.name if student.class_ else '未分配' }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-primary" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editStudentModal"
+                                        data-student-id="{{ student.id }}"
+                                        data-student-number="{{ student.student_id }}"
+                                        data-student-name="{{ student.name }}"
+                                        data-student-gender="{{ student.gender }}"
+                                        data-student-age="{{ student.age }}"
+                                        data-student-class="{{ student.class_.id if student.class_ else '' }}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <a href="#" onclick="return confirmDelete('{{ url_for('student.delete_student', id=student.id) }}', '{{ student.name }}')" 
+                                   class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="bi bi-inbox h4 d-block"></i>
+                                暂无学生数据
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 添加学生模态框 -->
+<div class="modal fade" id="addStudentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">添加学生</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('student.add_student') }}" class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="student_id" class="form-label">学号</label>
+                        <input type="text" class="form-control" id="student_id" name="student_id" required>
+                        <div class="invalid-feedback">请输入学号</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">姓名</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="invalid-feedback">请输入姓名</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="gender" class="form-label">性别</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="">请选择性别</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                        <div class="invalid-feedback">请选择性别</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="age" class="form-label">年龄</label>
+                        <input type="number" class="form-control" id="age" name="age" required min="1" max="150">
+                        <div class="invalid-feedback">请输入有效年龄</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="class_id" class="form-label">班级</label>
+                        <select class="form-select" id="class_id" name="class_id">
+                            <option value="">请选择班级</option>
+                            {% for class_ in classes %}
+                            <option value="{{ class_.id }}">{{ class_.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑学生模态框 -->
+<div class="modal fade" id="editStudentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">编辑学生</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('student.edit_student') }}" class="needs-validation" novalidate>
+                <input type="hidden" name="id" id="edit_id">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_student_id" class="form-label">学号</label>
+                        <input type="text" class="form-control" id="edit_student_id" name="student_id" required>
+                        <div class="invalid-feedback">请输入学号</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_name" class="form-label">姓名</label>
+                        <input type="text" class="form-control" id="edit_name" name="name" required>
+                        <div class="invalid-feedback">请输入姓名</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_gender" class="form-label">性别</label>
+                        <select class="form-select" id="edit_gender" name="gender" required>
+                            <option value="">请选择性别</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                        <div class="invalid-feedback">请选择性别</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_age" class="form-label">年龄</label>
+                        <input type="number" class="form-control" id="edit_age" name="age" required min="1" max="150">
+                        <div class="invalid-feedback">请输入有效年龄</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_class_id" class="form-label">班级</label>
+                        <select class="form-select" id="edit_class_id" name="class_id">
+                            <option value="">请选择班级</option>
+                            {% for class_ in classes %}
+                            <option value="{{ class_.id }}">{{ class_.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 编辑学生模态框数据填充
+    const editStudentModal = document.getElementById('editStudentModal');
+    if (editStudentModal) {
+        editStudentModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const id = button.getAttribute('data-student-id');
+            const studentId = button.getAttribute('data-student-number');
+            const name = button.getAttribute('data-student-name');
+            const gender = button.getAttribute('data-student-gender');
+            const age = button.getAttribute('data-student-age');
+            const classId = button.getAttribute('data-student-class');
+
+            editStudentModal.querySelector('#edit_id').value = id;
+            editStudentModal.querySelector('#edit_student_id').value = studentId;
+            editStudentModal.querySelector('#edit_name').value = name;
+            editStudentModal.querySelector('#edit_gender').value = gender;
+            editStudentModal.querySelector('#edit_age').value = age;
+            editStudentModal.querySelector('#edit_class_id').value = classId || '';
+        });
+    }
+});
+</script>
+{% endblock %} 

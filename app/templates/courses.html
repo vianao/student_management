@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>课程管理</h2>
+        </div>
+        <div class="col text-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCourseModal">
+                <i class="bi bi-plus-circle me-1"></i>添加课程
+            </button>
+        </div>
+    </div>
+
+    <!-- 课程列表 -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>课程编号</th>
+                            <th>课程名称</th>
+                            <th>学分</th>
+                            <th>描述</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in courses %}
+                        <tr>
+                            <td>{{ course.course_id }}</td>
+                            <td>{{ course.name }}</td>
+                            <td>{{ course.credits }}</td>
+                            <td>{{ course.description or '暂无描述' }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ course.id }}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <a href="{{ url_for('course.delete_course', id=course.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('确定要删除这门课程吗？')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 添加课程模态框 -->
+<div class="modal fade" id="addCourseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">添加课程</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('course.add_course') }}" method="POST" class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="course_id" class="form-label">课程编号</label>
+                        <input type="text" class="form-control" id="course_id" name="course_id" required>
+                        <div class="invalid-feedback">请输入课程编号</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">课程名称</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="invalid-feedback">请输入课程名称</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="credits" class="form-label">学分</label>
+                        <input type="number" class="form-control" id="credits" name="credits" step="0.5" min="0" required>
+                        <div class="invalid-feedback">请输入有效的学分</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">课程描述</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑课程模态框 -->
+{% for course in courses %}
+<div class="modal fade" id="editModal{{ course.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">编辑课程</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('course.edit_course') }}" method="POST" class="needs-validation" novalidate>
+                <input type="hidden" name="id" value="{{ course.id }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_course_id{{ course.id }}" class="form-label">课程编号</label>
+                        <input type="text" class="form-control" id="edit_course_id{{ course.id }}" name="course_id" value="{{ course.course_id }}" required>
+                        <div class="invalid-feedback">请输入课程编号</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_name{{ course.id }}" class="form-label">课程名称</label>
+                        <input type="text" class="form-control" id="edit_name{{ course.id }}" name="name" value="{{ course.name }}" required>
+                        <div class="invalid-feedback">请输入课程名称</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_credits{{ course.id }}" class="form-label">学分</label>
+                        <input type="number" class="form-control" id="edit_credits{{ course.id }}" name="credits" value="{{ course.credits }}" step="0.5" min="0" required>
+                        <div class="invalid-feedback">请输入有效的学分</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_description{{ course.id }}" class="form-label">课程描述</label>
+                        <textarea class="form-control" id="edit_description{{ course.id }}" name="description" rows="3">{{ course.description or '' }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 在页面加载完成后为所有表单添加验证
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有需要验证的表单
+    const forms = document.querySelectorAll('.needs-validation');
+
+    // 为每个表单添加验证
+    forms.forEach(form => {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+    });
+});
+</script>
+{% endblock %} 

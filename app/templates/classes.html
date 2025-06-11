@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>班级管理</h2>
+    </div>
+    <div class="col text-end">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addClassModal">
+            <i class="bi bi-plus-circle me-1"></i>添加班级
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    {% for class_ in classes %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title mb-0">{{ class_.name }}</h5>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editClassModal"
+                                data-class-id="{{ class_.id }}"
+                                data-class-name="{{ class_.name }}">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <a href="#" onclick="return confirmDelete('{{ url_for('class_.delete_class', id=class_.id) }}', '{{ class_.name }}')"
+                           class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="class-stats mb-3">
+                    <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded">
+                        <span class="text-muted">学生人数</span>
+                        <span class="badge bg-primary rounded-pill">{{ class_.students|length }}</span>
+                    </div>
+                </div>
+
+                {% if class_.students %}
+                <div class="student-list">
+                    <h6 class="text-muted mb-2">学生列表</h6>
+                    <div class="list-group list-group-flush">
+                        {% for student in class_.students[:5] %}
+                        <div class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <span>{{ student.name }}</span>
+                            <span class="text-muted small">{{ student.student_id }}</span>
+                        </div>
+                        {% endfor %}
+                        {% if class_.students|length > 5 %}
+                        <div class="list-group-item px-0 text-center text-muted small">
+                            还有 {{ class_.students|length - 5 }} 名学生...
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-3">
+                    <i class="bi bi-people h4 d-block"></i>
+                    暂无学生
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-collection h1 text-muted mb-3 d-block"></i>
+                <h5 class="text-muted">暂无班级数据</h5>
+                <p class="text-muted">点击"添加班级"按钮创建新的班级</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- 添加班级模态框 -->
+<div class="modal fade" id="addClassModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">添加班级</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('class_.add_class') }}" class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">班级名称</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="invalid-feedback">请输入班级名称</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑班级模态框 -->
+<div class="modal fade" id="editClassModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">编辑班级</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('class_.edit_class') }}" class="needs-validation" novalidate>
+                <input type="hidden" name="id" id="edit_id">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_name" class="form-label">班级名称</label>
+                        <input type="text" class="form-control" id="edit_name" name="name" required>
+                        <div class="invalid-feedback">请输入班级名称</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 编辑班级模态框数据填充
+    const editClassModal = document.getElementById('editClassModal');
+    if (editClassModal) {
+        editClassModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const id = button.getAttribute('data-class-id');
+            const name = button.getAttribute('data-class-name');
+
+            editClassModal.querySelector('#edit_id').value = id;
+            editClassModal.querySelector('#edit_name').value = name;
+        });
+    }
+});
+</script>
+{% endblock %} 
