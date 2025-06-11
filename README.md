@@ -21,7 +21,7 @@
 1. 克隆项目到本地：
 ```bash
 git clone [项目地址]
-cd student-management-system
+cd student_management-master
 ```
 
 2. 创建虚拟环境并激活：

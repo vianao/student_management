@@ -17,7 +17,8 @@ def add_course():
         course = Course(
             course_id=request.form['course_id'],
             name=request.form['name'],
-            credits=float(request.form['credits'])
+            credits=float(request.form['credits']),
+            description=request.form.get('description')
         )
         db.session.add(course)
         db.session.commit()
@@ -35,6 +36,7 @@ def edit_course():
         course.course_id = request.form['course_id']
         course.name = request.form['name']
         course.credits = float(request.form['credits'])
+        course.description = request.form.get('description')
         db.session.commit()
         flash('课程信息更新成功！', 'success')
     except Exception as e:

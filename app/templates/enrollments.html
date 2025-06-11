@@ -15,7 +15,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="student_id">学生</label>
-                            <select class="form-control" id="student_id" name="student_id" required>
+                            <select class="form-select" id="student_id" name="student_id" required>
                                 <option value="">请选择学生</option>
                                 {% for student in students %}
                                 <option value="{{ student.id }}">{{ student.name }}</option>
@@ -26,7 +26,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="course_id">课程</label>
-                            <select class="form-control" id="course_id" name="course_id" required>
+                            <select class="form-select" id="course_id" name="course_id" required>
                                 <option value="">请选择课程</option>
                                 {% for course in courses %}
                                 <option value="{{ course.id }}">{{ course.name }}</option>
@@ -69,7 +69,7 @@
                             <td>{{ enrollment.course.name }}</td>
                             <td>{{ enrollment.grade if enrollment.grade is not none else '未录入' }}</td>
                             <td>
-                                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal{{ enrollment.id }}">
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ enrollment.id }}">
                                     编辑
                                 </button>
                                 <a href="{{ url_for('enrollment.delete_enrollment', id=enrollment.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('确定要退选这门课程吗？')">
@@ -77,55 +77,72 @@
                                 </a>
                             </td>
                         </tr>
-
-                        <!-- 编辑选课模态框 -->
-                        <div class="modal fade" id="editModal{{ enrollment.id }}" tabindex="-1" role="dialog">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">编辑选课信息</h5>
-                                        <button type="button" class="close" data-dismiss="modal">
-                                            <span>&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form action="{{ url_for('enrollment.edit_enrollment') }}" method="POST">
-                                            <input type="hidden" name="id" value="{{ enrollment.id }}">
-                                            <div class="form-group">
-                                                <label>学生</label>
-                                                <select class="form-control" name="student_id" required>
-                                                    {% for student in students %}
-                                                    <option value="{{ student.id }}" {% if student.id == enrollment.student_id %}selected{% endif %}>
-                                                        {{ student.name }}
-                                                    </option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>课程</label>
-                                                <select class="form-control" name="course_id" required>
-                                                    {% for course in courses %}
-                                                    <option value="{{ course.id }}" {% if course.id == enrollment.course_id %}selected{% endif %}>
-                                                        {{ course.name }}
-                                                    </option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>成绩</label>
-                                                <input type="number" class="form-control" name="grade" min="0" max="100" value="{{ enrollment.grade }}">
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">保存更改</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
+    <!-- 编辑选课模态框 -->
+    {% for enrollment in enrollments %}
+    <div class="modal fade" id="editModal{{ enrollment.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ enrollment.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel{{ enrollment.id }}">编辑选课信息</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ url_for('enrollment.edit_enrollment') }}" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="{{ enrollment.id }}">
+                        <div class="form-group mb-3">
+                            <label class="form-label">学生</label>
+                            <select class="form-select" name="student_id" required>
+                                {% for student in students %}
+                                <option value="{{ student.id }}" {% if student.id == enrollment.student_id %}selected{% endif %}>
+                                    {{ student.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">课程</label>
+                            <select class="form-select" name="course_id" required>
+                                {% for course in courses %}
+                                <option value="{{ course.id }}" {% if course.id == enrollment.course_id %}selected{% endif %}>
+                                    {{ course.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">成绩</label>
+                            <input type="number" class="form-control" name="grade" min="0" max="100" value="{{ enrollment.grade }}">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-primary">保存更改</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 防止模态框关闭时表单重置
+    var modals = document.querySelectorAll('.modal');
+    modals.forEach(function(modal) {
+        modal.addEventListener('hidden.bs.modal', function(event) {
+            event.preventDefault();
+        });
+    });
+});
+</script>
 {% endblock %} 
