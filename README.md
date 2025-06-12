@@ -357,10 +357,7 @@ pip install -r requirements.txt
    - 复制`.env.example`为`.env`
    - 修改`.env`中的数据库配置
 
-5. 初始化数据库：
-```bash
-flask db upgrade
-```
+
 
 ## 运行项目
 
