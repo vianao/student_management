@@ -41,7 +41,9 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">添加选课</button>
+                <button type="submit" class="btn btn-primary mt-3">
+                    <i class="bi bi-plus-circle me-1"></i>添加选课
+                </button>
             </form>
         </div>
     </div>
@@ -69,12 +71,15 @@
                             <td>{{ enrollment.course.name }}</td>
                             <td>{{ enrollment.grade if enrollment.grade is not none else '未录入' }}</td>
                             <td>
-                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ enrollment.id }}">
-                                    编辑
-                                </button>
-                                <a href="{{ url_for('enrollment.delete_enrollment', id=enrollment.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('确定要退选这门课程吗？')">
-                                    退选
-                                </a>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center" data-bs-toggle="modal" data-bs-target="#editModal{{ enrollment.id }}">
+                                        <i class="bi bi-pencil-square" style="margin-right: 4px;"></i><span>编辑</span>
+                                    </button>
+                                    <a href="#" onclick="return confirmDelete('{{ url_for('enrollment.delete_enrollment', id=enrollment.id) }}', '{{ enrollment.student.name }} - {{ enrollment.course.name }}')" 
+                                       class="btn btn-sm btn-outline-danger d-inline-flex align-items-center">
+                                        <i class="bi bi-trash" style="margin-right: 4px;"></i><span>退选</span>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -122,8 +127,12 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-primary">保存更改</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i>取消
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i>保存
+                        </button>
                     </div>
                 </form>
             </div>

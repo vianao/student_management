@@ -36,7 +36,7 @@
                         <td>{{ student.class_.name if student.class_ else '未分配' }}</td>
                         <td>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-sm btn-outline-primary" 
+                                <button type="button" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#editStudentModal"
                                         data-student-id="{{ student.id }}"
@@ -45,11 +45,11 @@
                                         data-student-gender="{{ student.gender }}"
                                         data-student-age="{{ student.age }}"
                                         data-student-class="{{ student.class_.id if student.class_ else '' }}">
-                                    <i class="bi bi-pencil-square"></i>
+                                    <i class="bi bi-pencil-square" style="margin-right: 4px;"></i><span>编辑</span>
                                 </button>
                                 <a href="#" onclick="return confirmDelete('{{ url_for('student.delete_student', id=student.id) }}', '{{ student.name }}')" 
-                                   class="btn btn-sm btn-outline-danger">
-                                    <i class="bi bi-trash"></i>
+                                   class="btn btn-sm btn-outline-danger d-inline-flex align-items-center">
+                                    <i class="bi bi-trash" style="margin-right: 4px;"></i><span>删除</span>
                                 </a>
                             </div>
                         </td>

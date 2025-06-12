@@ -7,6 +7,8 @@
     --text-color: #2c3e50;
     --border-color: #dcdde1;
     --hover-color: #f8f9fa;
+    --sidebar-width: 250px;
+    --header-height: 60px;
 }
 
 body {
@@ -14,7 +16,415 @@ body {
     color: var(--text-color);
     background-color: #f5f6fa;
     line-height: 1.6;
+    margin: 0;
+    padding: 0;
 }
+
+/* 布局样式 */
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* 侧边栏样式 */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: #fff;
+    color: var(--text-color);
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    padding: 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0;
+    background-color: #fff;
+}
+
+.sidebar .nav {
+    margin-top: 2rem;
+}
+
+.sidebar .navbar-brand {
+    text-decoration: none;
+    display: block;
+    padding: 0;
+}
+
+.logo-img {
+    width: 100%;
+    height: auto;
+    max-height: 60px;
+    object-fit: contain;
+}
+
+.sidebar .nav-link {
+    color: var(--text-color) !important;
+    padding: 1rem !important;
+    border-radius: 0;
+    margin-bottom: 0;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar .nav-link:hover {
+    color: var(--primary-color) !important;
+    background-color: var(--hover-color);
+    border-left: 3px solid var(--primary-color);
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--hover-color);
+    color: var(--primary-color) !important;
+    font-weight: 500;
+    border-left: 3px solid var(--primary-color);
+}
+
+.sidebar .nav-link i {
+    width: 20px;
+    text-align: center;
+    margin-right: 0.8rem;
+    color: #6c757d;
+}
+
+.sidebar .nav-link:hover i,
+.sidebar .nav-link.active i {
+    color: var(--primary-color);
+}
+
+/* 主要内容区域样式 */
+.content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+    background-color: #f5f6fa;
+    min-height: 100vh;
+}
+
+/* 卡片样式 */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1.5rem;
+    background: white;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* 表格样式 */
+.table {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
+}
+
+.table thead th {
+    border-top: none;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.table td, .table th {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+/* 按钮样式 */
+.btn {
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #357abd;
+    border-color: #357abd;
+    transform: translateY(-1px);
+}
+
+/* 按钮组样式 */
+.btn-group {
+    display: inline-flex;
+    gap: 0.5rem;
+}
+
+.btn-group .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem 0.75rem;
+    border-radius: 4px;
+    min-width: 80px;
+}
+
+.btn-group .btn i {
+    font-size: 1rem;
+    line-height: 1;
+    margin-right: 0.5rem;
+}
+
+/* 移动端按钮组样式 */
+@media (max-width: 768px) {
+    .btn-group {
+        display: flex;
+        width: 100%;
+    }
+
+    .btn-group .btn {
+        flex: 1;
+        padding: 0.5rem;
+    }
+
+    .btn-group .btn i {
+        margin-right: 0.25rem;
+    }
+}
+
+/* 按钮轮廓样式 */
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--border-color);
+    background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+    color: white;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-danger {
+    color: var(--danger-color);
+    border-color: var(--border-color);
+    background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+    color: white;
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+/* 表单样式 */
+.form-control, .form-select {
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}
+
+/* 页脚样式 */
+.footer {
+    background-color: white;
+    border-top: 1px solid var(--border-color);
+    padding: 1rem 0;
+    margin-top: 2rem;
+}
+
+/* 移动端样式 */
+.mobile-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: white;
+    z-index: 1040;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: none;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .mobile-header {
+        display: flex;
+    }
+}
+
+.mobile-title {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    text-align: center;
+    flex-grow: 1;
+}
+
+.navbar-toggler {
+    width: 40px;
+    height: 40px;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    background-color: white;
+    color: var(--text-color);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover {
+    background-color: var(--hover-color);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.navbar-toggler i {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1050;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .content {
+        margin-left: 0;
+        padding-top: 70px;
+    }
+
+    .wrapper {
+        position: relative;
+    }
+
+    .navbar-toggler {
+        display: flex !important;
+    }
+
+    /* 表格响应式优化 */
+    .table-responsive {
+        margin: 0 -1rem;
+    }
+
+    .table td, .table th {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    /* 按钮组样式 */
+.btn-group {
+    display: inline-flex;
+    gap: 0.25rem;
+}
+
+.btn-group .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 4px;
+}
+
+.btn-group .btn i {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* 移动端按钮组样式 */
+@media (max-width: 768px) {
+    .btn-group {
+        gap: 0.5rem;
+    }
+
+    .btn-group .btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .btn-group .btn i {
+        font-size: 1.125rem;
+    }
+}
+
+    /* 卡片响应式优化 */
+    .card {
+        margin: 0 -1rem;
+        border-radius: 0;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    /* 模态框响应式优化 */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .modal-content {
+        border-radius: 8px;
+    }
+
+    .modal-header {
+        padding: 1rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .modal-footer {
+        padding: 1rem;
+    }
+
+    /* 页面标题响应式优化 */
+    .row.mb-4 {
+        margin: 0 -1rem;
+        padding: 0 1rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+  }
 
 /* 导航栏样式 */
 .navbar {
@@ -45,31 +455,6 @@ body {
 .nav-link.active {
     background-color: rgba(255, 255, 255, 0.2);
     color: white !important;
-}
-
-/* 卡片样式 */
-.card {
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-bottom: 1.5rem;
-    background: white;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.card-body {
-    padding: 1.5rem;
-}
-
-.card-title {
-    color: var(--primary-color);
-    font-weight: 600;
-    margin-bottom: 1rem;
 }
 
 /* 表格样式 */
@@ -105,25 +490,6 @@ body {
 }
 
 /* 按钮样式 */
-.btn {
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
-    border: none;
-    box-shadow: 0 2px 4px rgba(74, 144, 226, 0.2);
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, #357abd 0%, #2c6aa0 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
-}
-
 .btn-danger {
     background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
     border: none;
@@ -134,25 +500,6 @@ body {
     background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
-}
-
-/* 表单样式 */
-.form-control, .form-select {
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    padding: 0.75rem 1rem;
-    transition: all 0.3s ease;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
-}
-
-.form-label {
-    font-weight: 500;
-    color: var(--text-color);
-    margin-bottom: 0.5rem;
 }
 
 /* 模态框样式 */
