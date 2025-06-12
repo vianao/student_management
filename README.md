@@ -145,37 +145,37 @@
 
 ```mermaid
 erDiagram
-    Class ||--o{ Student : "contains"
-    Student ||--o{ Enrollment : "enrolls"
-    Course ||--o{ Enrollment : "enrolled_by"
+    Class o|--|{ Student : contains
+    Student o|--|{ Enrollment : enrolls
+    Course o|--|{ Enrollment : enrolled_by
 
     Class {
-        int id PK "主键"
-        string name UK "班级名称"
+        int id PK
+        string name UK
     }
 
     Student {
-        int id PK "主键"
-        string student_id UK "学号"
-        string name "姓名"
-        string gender "性别"
-        int age "年龄"
-        int class_id FK "班级ID"
+        int id PK
+        string student_id UK
+        string name
+        string gender
+        int age
+        int class_id FK
     }
 
     Course {
-        int id PK "主键"
-        string course_id UK "课程编号"
-        string name "课程名称"
-        float credits "学分"
-        text description "课程描述"
+        int id PK
+        string course_id UK
+        string name
+        float credits
+        text description
     }
 
     Enrollment {
-        int id PK "主键"
-        int student_id FK "学生ID"
-        int course_id FK "课程ID"
-        int grade "成绩"
+        int id PK
+        int student_id FK
+        int course_id FK
+        int grade
     }
 ```
 
