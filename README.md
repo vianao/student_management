@@ -145,36 +145,36 @@
 
 ```mermaid
 erDiagram
-    Class o|--|{ Student : contains
-    Student o|--|{ Enrollment : enrolls
-    Course o|--|{ Enrollment : enrolled_by
+    Class ||--|| Student : has
+    Student ||--|| Enrollment : makes
+    Course ||--|| Enrollment : includes
 
     Class {
-        int id PK
-        string name UK
+        int id
+        string name
     }
 
     Student {
-        int id PK
-        string student_id UK
+        int id
+        string studentId
         string name
         string gender
         int age
-        int class_id FK
+        int classId
     }
 
     Course {
-        int id PK
-        string course_id UK
+        int id
+        string courseId
         string name
         float credits
-        text description
+        string description
     }
 
     Enrollment {
-        int id PK
-        int student_id FK
-        int course_id FK
+        int id
+        int studentId
+        int courseId
         int grade
     }
 ```
