@@ -145,9 +145,9 @@
 
 ```mermaid
 erDiagram
-    Class ||--o{ Student : contains
-    Student ||--o{ Enrollment : has
-    Course ||--o{ Enrollment : has
+    Class ||..o{ Student : "包含"
+    Student ||..o{ Enrollment : "选课"
+    Course ||..o{ Enrollment : "被选"
 
     Class {
         int id PK "主键"
@@ -228,7 +228,7 @@ erDiagram
 4. 选课(Enrollment)属性：
    - id：整型，主键，自增
    - student_id：整型，外键，关联学生
-   - course_id：整型，外键，关联课程
+   - course_id：整型外键，关联课程
    - grade：整型，成绩
 
 #### 3. 关系及约束说明
