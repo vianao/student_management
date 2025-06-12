@@ -469,6 +469,7 @@ INSERT INTO enrollments (student_id, course_id, grade) VALUES
 (10, 4, 85);
 ```
 
+```
 -- 查询学生总人数
 SELECT COUNT(*) as total_students FROM students;
 
@@ -485,3 +486,4 @@ JOIN enrollments e ON s.id = e.student_id
 GROUP BY s.id, s.student_id, s.name 
 ORDER BY avg_grade DESC 
 LIMIT 3;
+```
