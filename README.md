@@ -337,7 +337,7 @@ CREATE INDEX idx_enrollment_grade ON enrollments(grade);
 1. 克隆项目到本地：
 ```bash
 git clone [项目地址]
-cd student_management-master
+cd student_management
 ```
 
 2. 创建虚拟环境并激活：
