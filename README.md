@@ -145,18 +145,18 @@
 
 ```mermaid
 erDiagram
-    Class ||..o{ Student : "包含"
-    Student ||..o{ Enrollment : "选课"
-    Course ||..o{ Enrollment : "被选"
+    Class ||--o{ Student : "contains"
+    Student ||--o{ Enrollment : "enrolls"
+    Course ||--o{ Enrollment : "enrolled_by"
 
     Class {
         int id PK "主键"
-        string name UK "班级名称(唯一)"
+        string name UK "班级名称"
     }
 
     Student {
         int id PK "主键"
-        string student_id UK "学号(唯一)"
+        string student_id UK "学号"
         string name "姓名"
         string gender "性别"
         int age "年龄"
@@ -165,7 +165,7 @@ erDiagram
 
     Course {
         int id PK "主键"
-        string course_id UK "课程编号(唯一)"
+        string course_id UK "课程编号"
         string name "课程名称"
         float credits "学分"
         text description "课程描述"
