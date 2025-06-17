@@ -1,0 +1,40 @@
+<!-- 左侧导航栏 -->
+<nav class="sidebar">
+    <div class="sidebar-header">
+        <a class="navbar-brand" href="{{ url_for('views.index') }}">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="学生管理系统" class="logo-img">
+        </a>
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'student.list_students' %}active{% endif %}" 
+               href="{{ url_for('student.list_students') }}">
+               <i class="bi bi-people-fill"></i>学生管理
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'class_.list_classes' %}active{% endif %}" 
+               href="{{ url_for('class_.list_classes') }}">
+               <i class="bi bi-collection-fill"></i>班级管理
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'course.list_courses' %}active{% endif %}" 
+               href="{{ url_for('course.list_courses') }}">
+               <i class="bi bi-book-fill"></i>课程管理
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'enrollment.list_enrollments' %}active{% endif %}" 
+               href="{{ url_for('enrollment.list_enrollments') }}">
+               <i class="bi bi-pencil-square"></i>选课管理
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'analysis.index' %}active{% endif %}" 
+               href="{{ url_for('analysis.index') }}">
+                <i class="bi bi-graph-up"></i>成绩分析
+            </a>
+        </li>
+    </ul>
+</nav> 

@@ -68,10 +68,112 @@ function showSuccess(message) {
     }, 3000);
 }
 
-// 确认删除
-function confirmDelete(message) {
-    return confirm(message || '确定要删除吗？');
+// 移动端导航栏管理
+class MobileNavigation {
+    constructor() {
+        this.sidebarToggle = document.getElementById('sidebarToggle');
+        this.sidebar = document.querySelector('.sidebar');
+        this.content = document.querySelector('.content');
+        this.init();
+    }
+
+    init() {
+        this.setupSidebarToggle();
+        this.setupContentClick();
+        this.setupSidebarClick();
+        this.setupResizeHandler();
+    }
+
+    setupSidebarToggle() {
+        if (this.sidebarToggle && this.sidebar) {
+            this.sidebarToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.sidebar.classList.toggle('show');
+            });
+        }
+    }
+
+    setupContentClick() {
+        if (this.content && this.sidebar) {
+            this.content.addEventListener('click', () => {
+                if (window.innerWidth <= 768 && this.sidebar.classList.contains('show')) {
+                    this.sidebar.classList.remove('show');
+                }
+            });
+        }
+    }
+
+    setupSidebarClick() {
+        if (this.sidebar) {
+            this.sidebar.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+    }
+
+    setupResizeHandler() {
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768 && this.sidebar) {
+                this.sidebar.classList.remove('show');
+            }
+        });
+    }
 }
+
+// 通用删除确认
+function confirmDelete(url, name) {
+    return Swal.fire({
+        title: '确认删除',
+        text: `确定要删除 ${name} 吗？`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '确定删除',
+        cancelButtonText: '取消'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = url;
+        }
+        return false;
+    });
+}
+
+// 表单验证
+class FormValidator {
+    static init() {
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }
+}
+
+// 自动隐藏提示消息
+class AlertManager {
+    static init(timeout = 5000) {
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, timeout);
+    }
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+    new MobileNavigation();
+    FormValidator.init();
+    AlertManager.init();
+});
 
 // 格式化日期
 function formatDate(dateString) {
