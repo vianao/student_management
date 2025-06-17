@@ -90,6 +90,7 @@ class Course(BaseModel):
   * student_id：学生ID（外键）
   * course_id：课程ID（外键）
   * grade：成绩
+  * enrollment_date：选课日期
 ```python
 class Enrollment(BaseModel):
     __tablename__ = 'enrollments'
@@ -98,6 +99,7 @@ class Enrollment(BaseModel):
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'))
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     grade = db.Column(db.Float, default=0.0)
+    enrollment_date = db.Column(db.DateTime, default=datetime.now)
 ```
 
 ## 模型关系

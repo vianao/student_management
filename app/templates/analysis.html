@@ -2,7 +2,115 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="mb-4">成绩统计分析</h2>
+    <h2>数据分析</h2>
+    
+    <!-- 成绩导出部分 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>成绩导出</h4>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('analysis.export_scores') }}" method="post">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="class_id">班级筛选</label>
+                            <select class="form-control" id="class_id" name="class_id">
+                                <option value="">全部班级</option>
+                                {% for class in classes %}
+                                <option value="{{ class.id }}">{{ class.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="course_id">课程筛选</label>
+                            <select class="form-control" id="course_id" name="course_id">
+                                <option value="">全部课程</option>
+                                {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="grade_range">成绩范围</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="min_grade" placeholder="最低分" min="0" max="100">
+                                <div class="input-group-text">-</div>
+                                <input type="number" class="form-control" name="max_grade" placeholder="最高分" min="0" max="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>选课时间范围</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" name="start_date">
+                                <div class="input-group-text">至</div>
+                                <input type="date" class="form-control" name="end_date">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label>导出字段选择</label>
+                        <div class="form-check">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" name="fields" value="student_id" checked>
+                                    <label class="form-check-label">学号</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" name="fields" value="name" checked>
+                                    <label class="form-check-label">姓名</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" name="fields" value="class_name" checked>
+                                    <label class="form-check-label">班级</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" name="fields" value="course_code" checked>
+                                    <label class="form-check-label">课程代码</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" name="fields" value="course_name" checked>
+                                    <label class="form-check-label">课程名称</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" name="fields" value="grade" checked>
+                                    <label class="form-check-label">成绩</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" name="fields" value="enrollment_date" checked>
+                                    <label class="form-check-label">选课日期</label>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="checkbox" class="form-check-input" name="fields" value="credits">
+                                    <label class="form-check-label">学分</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-download"></i> 导出成绩
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- 总体统计卡片 -->
     <div class="row mb-4">
@@ -90,27 +198,16 @@
                             <th>姓名</th>
                             <th>平均分</th>
                             <th>已修课程数</th>
-                            <th>成绩分布</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for stat in student_stats %}
-                        {% set avg_grade = stat.avg_grade or 0 %}
                         <tr>
                             <td>{{ loop.index }}</td>
                             <td>{{ stat.student_id }}</td>
                             <td>{{ stat.name }}</td>
-                            <td>{{ "%.1f"|format(avg_grade) }}</td>
+                            <td>{{ "%.1f"|format(stat.avg_grade) }}</td>
                             <td>{{ stat.course_count }}</td>
-                            <td>
-                                <div class="progress" style="height: 20px;">
-                                    <div class="progress-bar {{ 'bg-success' if avg_grade >= 60 else 'bg-danger' }}" 
-                                         role="progressbar" 
-                                         style="width: {{ avg_grade }}%">
-                                        {{ "%.1f"|format(avg_grade) }}%
-                                    </div>
-                                </div>
-                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -122,53 +219,14 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+<!-- 分析页面脚本 -->
+<script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('gradeDistributionChart').getContext('2d');
-    const chartData = {
-        labels: {{ grade_distribution.keys()|list|tojson }},
-        datasets: [{
-            label: '学生人数',
-            data: {{ grade_distribution.values()|list|tojson }},
-            backgroundColor: [
-                'rgba(40, 167, 69, 0.8)',
-                'rgba(23, 162, 184, 0.8)',
-                'rgba(255, 193, 7, 0.8)',
-                'rgba(255, 127, 80, 0.8)',
-                'rgba(220, 53, 69, 0.8)'
-            ],
-            borderColor: [
-                'rgb(40, 167, 69)',
-                'rgb(23, 162, 184)',
-                'rgb(255, 193, 7)',
-                'rgb(255, 127, 80)',
-                'rgb(220, 53, 69)'
-            ],
-            borderWidth: 1
-        }]
-    };
-    const chartOptions = {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    stepSize: 1
-                }
-            }
-        },
-        plugins: {
-            legend: {
-                display: false
-            }
-        }
-    };
-    new Chart(ctx, {
-        type: 'bar',
-        data: chartData,
-        options: chartOptions
-    });
+    // 初始化成绩分布图表
+    initGradeDistributionChart({{ grade_distribution | tojson }});
 });
 </script>
 {% endblock %} 

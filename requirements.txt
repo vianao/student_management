@@ -6,3 +6,8 @@ Flask-Migrate==4.0.4
 pymysql==1.1.0
 python-dotenv==1.0.0
 Werkzeug==2.3.7
+# 数据处理和分析
+pandas==2.1.1
+numpy==1.26.0
+openpyxl==3.1.2  # Excel文件支持
+xlsxwriter==3.1.9  # Excel文件导出增强支持

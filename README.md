@@ -48,6 +48,11 @@
   * 录入课程成绩
   * 修改成绩
   * 成绩统计分析
+  * 成绩数据导出功能：
+    - 支持多种筛选条件（班级、课程、成绩范围、时间范围）
+    - 自定义导出字段选择
+    - Excel格式导出
+    - 自动列宽调整
 
 ### 2. 系统实体及属性
 
@@ -292,24 +297,24 @@ USE student_management;
 -- 创建班级表
 CREATE TABLE classes (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(50) NOT NULL UNIQUE COMMENT '班级名称'
+    name VARCHAR(50) UNIQUE NOT NULL COMMENT '班级名称'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='班级表';
 
 -- 创建学生表
 CREATE TABLE students (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    student_id VARCHAR(20) NOT NULL UNIQUE COMMENT '学号',
+    student_id VARCHAR(20) UNIQUE NOT NULL COMMENT '学号',
     name VARCHAR(50) NOT NULL COMMENT '姓名',
     gender VARCHAR(10) COMMENT '性别',
     age INT COMMENT '年龄',
-    class_id INT COMMENT '班级ID',
+    class_id INT NOT NULL COMMENT '班级ID',
     FOREIGN KEY (class_id) REFERENCES classes(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学生表';
 
 -- 创建课程表
 CREATE TABLE courses (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    course_id VARCHAR(20) NOT NULL UNIQUE COMMENT '课程编号',
+    course_id VARCHAR(20) UNIQUE NOT NULL COMMENT '课程编号',
     name VARCHAR(100) NOT NULL COMMENT '课程名称',
     credits FLOAT NOT NULL COMMENT '学分',
     description TEXT COMMENT '课程描述'
@@ -320,7 +325,8 @@ CREATE TABLE enrollments (
     id INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL COMMENT '学生ID',
     course_id INT NOT NULL COMMENT '课程ID',
-    grade INT DEFAULT NULL COMMENT '成绩',
+    grade INT COMMENT '成绩',
+    enrollment_date DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '选课日期',
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
     UNIQUE KEY `unique_enrollment` (student_id, course_id)
@@ -330,6 +336,7 @@ CREATE TABLE enrollments (
 CREATE INDEX idx_student_id ON students(student_id);
 CREATE INDEX idx_course_id ON courses(course_id);
 CREATE INDEX idx_enrollment_grade ON enrollments(grade);
+CREATE INDEX idx_enrollment_date ON enrollments(enrollment_date);
 ```
 
 ## 安装步骤
@@ -363,6 +370,11 @@ pip install -r requirements.txt
 
 ```bash
 python run.py
+```
+
+修改了数据库模型，需要进行数据库迁移
+```
+flask db migrate -m "Add enrollment_date to Enrollment model"
 ```
 
 访问 http://localhost:5000 即可使用系统。
@@ -413,74 +425,125 @@ MIT License
 #### 1. 扩展测试数据集
 
 ```sql
--- 1.1 插入班级数据
-INSERT INTO classes (name) VALUES 
-('计算机科学1班'),
-('软件工程1班'),
-('网络工程1班'),
-('数据科学1班'),
-('人工智能1班');
+-- 清空现有数据（按照外键关系的反序删除）
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE enrollments;
+TRUNCATE TABLE students;
+TRUNCATE TABLE courses;
+TRUNCATE TABLE classes;
+SET FOREIGN_KEY_CHECKS = 1;
 
--- 1.2 插入学生数据
-INSERT INTO students (student_id, name, gender, age, class_id) VALUES
-('2021001', '张三', '男', 20, 1),
-('2021002', '李四', '女', 19, 1),
-('2021003', '王五', '男', 21, 2),
-('2021004', '赵六', '女', 22, 2),
-('2021005', '周七', '男', 20, 3),
-('2021006', '吴八', '女', 19, 3),
-('2021007', '郑九', '男', 21, 4),
-('2021008', '冯十', '女', 22, 4),
-('2021009', '陈百', '男', 20, 5),
-('2021010', '褚千', '女', 19, 5);
+-- 1.1 插入班级数据
+INSERT INTO classes (id, name) VALUES 
+(1, '计算机科学2021级1班'),
+(2, '软件工程2021级1班'),
+(3, '网络工程2021级1班'),
+(4, '数据科学2022级1班'),
+(5, '人工智能2022级1班');
+
+-- 1.2 插入学生数据（使用上面插入的班级ID）
+INSERT INTO students (id, student_id, name, gender, age, class_id) VALUES
+(1, '2021001', '张三', '男', 20, 1),
+(2, '2021002', '李四', '女', 19, 1),
+(3, '2021003', '王五', '男', 21, 2),
+(4, '2021004', '赵六', '女', 20, 2),
+(5, '2021005', '周七', '男', 20, 3),
+(6, '2021006', '吴八', '女', 19, 3),
+(7, '2022001', '郑九', '男', 19, 4),
+(8, '2022002', '冯十', '女', 18, 4),
+(9, '2022003', '陈百', '男', 19, 5),
+(10, '2022004', '褚千', '女', 18, 5);
 
 -- 1.3 插入课程数据
-INSERT INTO courses (course_id, name, credits, description) VALUES
-('CS101', '计算机基础', 3, '计算机科学导论'),
-('CS102', '数据结构', 4, '数据组织与存储'),
-('CS103', '算法分析', 4, '算法设计与分析'),
-('CS104', '数据库系统', 3, '数据库原理与应用'),
-('CS105', '操作系统', 3, '计算机系统管理');
+INSERT INTO courses (id, course_id, name, credits, description) VALUES
+(1, 'CS101', '计算机导论', 3.0, '计算机科学与技术导论课程'),
+(2, 'CS102', '数据结构', 4.0, '数据结构与算法基础'),
+(3, 'CS103', '算法分析', 4.0, '算法设计与复杂度分析'),
+(4, 'CS104', '数据库系统', 3.0, '数据库原理与应用'),
+(5, 'CS105', '操作系统', 3.0, '操作系统原理与设计');
 
--- 1.4 插入选课数据
-INSERT INTO enrollments (student_id, course_id, grade) VALUES
-(1, 1, 85),
-(1, 2, 90),
-(2, 1, 78),
-(2, 3, 88),
-(3, 2, 92),
-(3, 4, 76),
-(4, 3, 81),
-(4, 5, 95),
-(5, 1, 89),
-(5, 5, 84),
-(6, 2, 77),
-(6, 4, 93),
-(7, 1, 82),
-(7, 3, 87),
-(8, 2, 94),
-(8, 5, 79),
-(9, 1, 88),
-(9, 3, 91),
-(10, 2, 76),
-(10, 4, 85);
-```
+-- 1.4 插入选课数据（使用上面插入的学生ID和课程ID）
+INSERT INTO enrollments (student_id, course_id, grade, enrollment_date) VALUES
+(1, 1, 85, '2023-09-01 10:00:00'),
+(1, 2, 90, '2023-09-01 10:30:00'),
+(2, 1, 78, '2023-09-01 11:00:00'),
+(2, 3, 88, '2023-09-01 14:00:00'),
+(3, 2, 92, '2023-09-02 09:00:00'),
+(3, 4, 76, '2023-09-02 10:00:00'),
+(4, 3, 81, '2023-09-02 11:00:00'),
+(4, 5, 95, '2023-09-02 14:00:00'),
+(5, 1, 89, '2023-09-03 09:00:00'),
+(5, 5, 84, '2023-09-03 10:00:00'),
+(6, 2, 77, '2023-09-03 11:00:00'),
+(6, 4, 93, '2023-09-03 14:00:00'),
+(7, 1, 82, '2023-09-04 09:00:00'),
+(7, 3, 87, '2023-09-04 10:00:00'),
+(8, 2, 94, '2023-09-04 11:00:00'),
+(8, 5, 79, '2023-09-04 14:00:00'),
+(9, 1, 88, '2023-09-05 09:00:00'),
+(9, 3, 91, '2023-09-05 10:00:00'),
+(10, 2, 76, '2023-09-05 11:00:00'),
+(10, 4, 85, '2023-09-05 14:00:00');
 
-```
--- 查询学生总人数
-SELECT COUNT(*) as total_students FROM students;
+-- 2. 测试查询语句
 
--- 查询每个班级的学生人数
+-- 2.1 查询学生总人数和班级分布
 SELECT c.name as class_name, COUNT(s.id) as student_count 
 FROM classes c 
 LEFT JOIN students s ON c.id = s.class_id 
-GROUP BY c.id, c.name;
+GROUP BY c.id, c.name 
+ORDER BY c.name;
 
--- 查询平均成绩最高的3名学生
-SELECT s.student_id, s.name, AVG(e.grade) as avg_grade 
-FROM students s 
-JOIN enrollments e ON s.id = e.student_id 
-GROUP BY s.id, s.student_id, s.name 
-ORDER BY avg_grade DESC 
-LIMIT 3;
+-- 2.2 查询各课程的平均分、最高分、最低分
+SELECT 
+    c.course_id,
+    c.name as course_name,
+    COUNT(e.id) as student_count,
+    ROUND(AVG(e.grade), 2) as avg_grade,
+    MAX(e.grade) as max_grade,
+    MIN(e.grade) as min_grade
+FROM courses c
+LEFT JOIN enrollments e ON c.id = e.course_id
+GROUP BY c.id, c.course_id, c.name
+ORDER BY c.course_id;
+
+-- 2.3 查询学生成绩排名（按平均分）
+SELECT 
+    s.student_id,
+    s.name,
+    c.name as class_name,
+    COUNT(e.id) as course_count,
+    ROUND(AVG(e.grade), 2) as avg_grade
+FROM students s
+JOIN classes c ON s.class_id = c.id
+LEFT JOIN enrollments e ON s.id = e.student_id
+GROUP BY s.id, s.student_id, s.name, c.name
+ORDER BY avg_grade DESC;
+
+-- 2.4 查询各班级的及格率
+SELECT 
+    c.name as class_name,
+    COUNT(e.id) as total_courses,
+    SUM(CASE WHEN e.grade >= 60 THEN 1 ELSE 0 END) as passed_courses,
+    ROUND(SUM(CASE WHEN e.grade >= 60 THEN 1 ELSE 0 END) * 100.0 / COUNT(e.id), 2) as pass_rate
+FROM classes c
+JOIN students s ON c.id = s.class_id
+JOIN enrollments e ON s.id = e.student_id
+GROUP BY c.id, c.name
+ORDER BY pass_rate DESC;
+
+-- 2.5 查询最近一周的选课记录
+SELECT 
+    s.student_id,
+    s.name as student_name,
+    c.course_id,
+    c.name as course_name,
+    e.enrollment_date
+FROM enrollments e
+JOIN students s ON e.student_id = s.id
+JOIN courses c ON e.course_id = c.id
+WHERE e.enrollment_date >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)
+ORDER BY e.enrollment_date DESC;
+```
+
 ```

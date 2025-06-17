@@ -94,10 +94,29 @@ __all__ = ['student_bp', 'class_bp', 'course_bp', 'enrollment_bp']
   * 课程平均分计算
   * 成绩分布展示
   * 及格率统计
+  * 成绩数据导出
 - 关键路由：
   ```python
-  @analysis_bp.route('/')           # 成绩分析主页
+  @analysis_bp.route('/')                # 成绩分析主页
+  @analysis_bp.route('/export_scores', methods=['POST'])  # 成绩导出
   ```
+- 导出功能特点：
+  * 支持多种筛选条件：
+    - 按班级筛选
+    - 按课程筛选
+    - 按成绩范围筛选
+    - 按选课时间筛选
+  * 自定义导出字段：
+    - 学号
+    - 姓名
+    - 班级
+    - 课程代码
+    - 课程名称
+    - 成绩
+    - 选课日期
+    - 学分
+  * Excel格式导出
+  * 自动列宽调整
 
 ## 路由特点
 

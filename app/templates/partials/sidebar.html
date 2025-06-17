@@ -31,8 +31,8 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {% if request.endpoint == 'analysis.index' %}active{% endif %}" 
-               href="{{ url_for('analysis.index') }}">
+            <a class="nav-link {% if request.endpoint == 'analysis.analysis_page' %}active{% endif %}" 
+               href="{{ url_for('analysis.analysis_page') }}">
                 <i class="bi bi-graph-up"></i>成绩分析
             </a>
         </li>
