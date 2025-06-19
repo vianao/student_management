@@ -150,37 +150,38 @@
 
 ```mermaid
 erDiagram
-    Class ||--|| Student : has
-    Student ||--|| Enrollment : makes
-    Course ||--|| Enrollment : includes
+    Class ||--o{ Student : has
+    Student ||--o{ Enrollment : includes
+    Course ||--o{ Enrollment : includes
 
     Class {
         int id
-        string name
+        string name UK
     }
 
     Student {
         int id
-        string studentId
+        string student_id UK
         string name
         string gender
         int age
-        int classId
+        int class_id FK
     }
 
     Course {
         int id
-        string courseId
+        string course_id UK
         string name
         float credits
-        string description
+        text description
     }
 
     Enrollment {
         int id
-        int studentId
-        int courseId
+        int student_id FK
+        int course_id FK
         int grade
+        datetime enrollment_date
     }
 ```
 
@@ -307,7 +308,7 @@ CREATE TABLE students (
     name VARCHAR(50) NOT NULL COMMENT '姓名',
     gender VARCHAR(10) COMMENT '性别',
     age INT COMMENT '年龄',
-    class_id INT NOT NULL COMMENT '班级ID',
+    class_id INT COMMENT '班级ID',
     FOREIGN KEY (class_id) REFERENCES classes(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学生表';
 
@@ -441,7 +442,7 @@ INSERT INTO classes (id, name) VALUES
 (4, '数据科学2022级1班'),
 (5, '人工智能2022级1班');
 
--- 1.2 插入学生数据（使用上面插入的班级ID）
+-- 1.2 插入学生数据
 INSERT INTO students (id, student_id, name, gender, age, class_id) VALUES
 (1, '2021001', '张三', '男', 20, 1),
 (2, '2021002', '李四', '女', 19, 1),
@@ -462,7 +463,7 @@ INSERT INTO courses (id, course_id, name, credits, description) VALUES
 (4, 'CS104', '数据库系统', 3.0, '数据库原理与应用'),
 (5, 'CS105', '操作系统', 3.0, '操作系统原理与设计');
 
--- 1.4 插入选课数据（使用上面插入的学生ID和课程ID）
+-- 1.4 插入选课数据
 INSERT INTO enrollments (student_id, course_id, grade, enrollment_date) VALUES
 (1, 1, 85, '2023-09-01 10:00:00'),
 (1, 2, 90, '2023-09-01 10:30:00'),
